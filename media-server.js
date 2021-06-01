@@ -55,18 +55,19 @@ app.post('/mediapost',upload.single('file'), (req,res)=>{
     res.json({file: req.file})
 })
 
-app.get('/mediaget', (req,res) =>{
-    gfs.files.find().toArray((err,files) =>{
-        if( !files || files.length === 0 ) {
-            return res.status(404).json({
-                err:'No files exist'
-            })
-        }
+app.get('/files', (req, res) => {
+    gfs.files.find().toArray((err, files) => {
+      // Check if files
+      if (!files || files.length === 0) {
+        return res.status(404).json({
+          err: 'No files exist'
+        })
+      }
+  
+      // Files exist
+      return res.json(files)
     })
-
-    //file exist
-    return res.json(files)
-})
+  })
 
 const port = process.env.PORT || 8000
 
