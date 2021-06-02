@@ -5,10 +5,8 @@ const crypto = require('crypto')
 const mongoose = require('mongoose')
 const multer = require('multer')
 const GridFsStorage = require('multer-gridfs-storage')
-const Grid = require ('gridfs-stream')
 const methodOverride = require('method-override')
 const cors = require('cors')
-const dotenv = require('dotenv')
 
 const app = express()
 
@@ -17,10 +15,7 @@ app.use(bodyParser.json())
 app.use(methodOverride('_method'))
 app.use(cors())
 
-// dotenv.config()
-// mongoose.connect(process.env.DB_CONNECTION,{ useNewUrlParser: true } , () =>console.log(`db connected`))
-
-const mongoURI = "mongodb+srv://KyleMiller:Luffy321@cluster0.2oag0.mongodb.net/user?retryWrites=true&w=majority"
+const mongoURI = "mongo connection"
 
 let conn = mongoose.createConnection(mongoURI, () =>console.log("db connected"))
 
@@ -31,6 +26,7 @@ console.log('big boobies')
 
 //storage
 
+//randomizes file name so you don't have repeat names doesn't have to and you can add a name this
 const storage = new GridFsStorage({
     url: mongoURI, 
     file: (req, file) => {
@@ -57,7 +53,8 @@ app.post('/mediapost',upload.single('file'), (req,res)=>{
     return res.json({file: req.file})
 })
 
-app.get('/files', (req, res) => {
+//gets all files
+app.get('/files', (req, res) => {2
     gfs.find().toArray((err, files) => {
       console.log(gfs.find())
       // Check if files
@@ -71,6 +68,7 @@ app.get('/files', (req, res) => {
     })
 })
 
+//gets files by filename
 app.get('/files/:filename', (req, res) => {
     gfs.find({ filename: req.params.filename }).toArray((err, file) => {
       // Check if file
@@ -92,7 +90,7 @@ conn.once('open', () => {
     //init stream
     // gfs=Grid(conn.db, mongoose.mongo)
     gfs = new mongoose.mongo.GridFSBucket(conn.db, {
-        bucketName:"fs"
+        bucketName:"fs" //check this matches your mongodb collection it should be user.uploads.files but for some reason it does user.fs.files
     })
     // gfs.collection('uploads')
     app.listen(port, () => console.log(`started on port ${port}`))
